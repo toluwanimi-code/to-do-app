@@ -24,31 +24,61 @@ function handleAddTask() {
     tasks.push(newTask);
     nextId++;
 
-    const li = document.createElement("li");
-    li.dataset.id = newTask.id;
-    li.textContent = trimmedTaskText;
+   const li = document.createElement("li");
+li.dataset.id = newTask.id;
 
-    taskList.appendChild(li);
+const taskText = document.createElement("span");
+taskText.textContent = trimmedTaskText;
 
-    taskInput.value = "";
-    taskInput.focus();
+const deleteBtn = document.createElement("button");
+deleteBtn.textContent = "Delete";
+deleteBtn.classList.add("delete-btn");
+
+li.appendChild(taskText);
+li.appendChild(deleteBtn);
+
+taskList.appendChild(li);
+
+taskInput.value = "";
+taskInput.focus();
 }
 
 function handleToggleComplete(event) {
     const clickedElement = event.target;
 
-    if (clickedElement.tagName !== "LI") {
+    if (clickedElement.classList.contains("delete-btn")) {
+        const li = clickedElement.closest("li");
+        const taskId = Number(li.dataset.id);
+
+        handleDeleteTask(taskId, li);
         return;
     }
 
-    const taskId = Number(clickedElement.dataset.id);
+    const li = clickedElement.closest("li");
 
-    const task = tasks.find(t => t.id === taskId);
+    if (!li) {
+        return;
+    }
+
+    const taskId = Number(li.dataset.id);
+
+    const task = tasks.find(task => task.id === taskId);
 
     if (!task) {
         return;
     }
 
     task.completed = !task.completed;
-    clickedElement.classList.toggle("completed");
+    li.classList.toggle("completed");
+}
+
+function handleDeleteTask(taskId, li) {
+    const taskIndex = tasks.findIndex(task => task.id === taskId);
+
+    if (taskIndex === -1) {
+        return;
+    }
+
+    tasks.splice(taskIndex, 1);
+    li.remove();
 }
