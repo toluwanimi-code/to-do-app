@@ -1,5 +1,9 @@
-const tasks = [];
-let nextId = 1;
+const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+let nextId =
+    tasks.length > 0
+        ? Math.max(...tasks.map(task => task.id)) + 1
+        : 1;
 
 const taskInput = document.getElementById("task-input");
 const addBtn = document.getElementById("add-btn");
@@ -7,6 +11,31 @@ const taskList = document.getElementById("task-list");
 
 addBtn.addEventListener("click", handleAddTask);
 taskList.addEventListener("click", handleToggleComplete);
+
+tasks.forEach(task => {
+    renderTask(task);
+});
+
+function renderTask(task) {
+    const li = document.createElement("li");
+    li.dataset.id = task.id;
+
+    if (task.completed) {
+        li.classList.add("completed");
+    }
+
+    const taskText = document.createElement("span");
+    taskText.textContent = task.text;
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "Delete";
+    deleteBtn.classList.add("delete-btn");
+
+    li.appendChild(taskText);
+    li.appendChild(deleteBtn);
+
+    taskList.appendChild(li);
+}
 
 function handleAddTask() {
     const trimmedTaskText = taskInput.value.trim();
@@ -24,23 +53,11 @@ function handleAddTask() {
     tasks.push(newTask);
     nextId++;
 
-   const li = document.createElement("li");
-li.dataset.id = newTask.id;
+    renderTask(newTask);
+    saveTasks();
 
-const taskText = document.createElement("span");
-taskText.textContent = trimmedTaskText;
-
-const deleteBtn = document.createElement("button");
-deleteBtn.textContent = "Delete";
-deleteBtn.classList.add("delete-btn");
-
-li.appendChild(taskText);
-li.appendChild(deleteBtn);
-
-taskList.appendChild(li);
-
-taskInput.value = "";
-taskInput.focus();
+    taskInput.value = "";
+    taskInput.focus();
 }
 
 function handleToggleComplete(event) {
@@ -69,7 +86,13 @@ function handleToggleComplete(event) {
     }
 
     task.completed = !task.completed;
+    saveTasks();
+
     li.classList.toggle("completed");
+}
+
+function saveTasks() {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
 function handleDeleteTask(taskId, li) {
@@ -80,5 +103,7 @@ function handleDeleteTask(taskId, li) {
     }
 
     tasks.splice(taskIndex, 1);
+    saveTasks();
+
     li.remove();
 }
