@@ -5,16 +5,41 @@ let nextId =
         ? Math.max(...tasks.map(task => task.id)) + 1
         : 1;
 
+let currentFilter = "all";
+
 const taskInput = document.getElementById("task-input");
 const addBtn = document.getElementById("add-btn");
 const taskList = document.getElementById("task-list");
 
+const allFilterBtn = document.getElementById("all-filter");
+const activeFilterBtn = document.getElementById("active-filter");
+const completedFilterBtn = document.getElementById("completed-filter");
+
 addBtn.addEventListener("click", handleAddTask);
 taskList.addEventListener("click", handleToggleComplete);
 
-tasks.forEach(task => {
-    renderTask(task);
-});
+allFilterBtn.addEventListener("click", () => handleFilterChange("all"));
+activeFilterBtn.addEventListener("click", () => handleFilterChange("active"));
+completedFilterBtn.addEventListener("click", () => handleFilterChange("completed"));
+
+
+handleFilterChange("all");
+
+function renderTasks() {
+    taskList.innerHTML = "";
+
+    let filteredTasks = tasks;
+
+    if (currentFilter === "active") {
+        filteredTasks = tasks.filter(task => !task.completed);
+    } else if (currentFilter === "completed") {
+        filteredTasks = tasks.filter(task => task.completed);
+    }
+
+    filteredTasks.forEach(task => {
+        renderTask(task);
+    });
+}
 
 function renderTask(task) {
     const li = document.createElement("li");
@@ -53,11 +78,29 @@ function handleAddTask() {
     tasks.push(newTask);
     nextId++;
 
-    renderTask(newTask);
     saveTasks();
+    renderTasks();
 
     taskInput.value = "";
     taskInput.focus();
+}
+
+function handleFilterChange(filter) {
+    currentFilter = filter;
+
+    allFilterBtn.classList.remove("active");
+    activeFilterBtn.classList.remove("active");
+    completedFilterBtn.classList.remove("active");
+
+    if (filter === "all") {
+        allFilterBtn.classList.add("active");
+    } else if (filter === "active") {
+        activeFilterBtn.classList.add("active");
+    } else {
+        completedFilterBtn.classList.add("active");
+    }
+
+    renderTasks();
 }
 
 function handleToggleComplete(event) {
@@ -67,7 +110,7 @@ function handleToggleComplete(event) {
         const li = clickedElement.closest("li");
         const taskId = Number(li.dataset.id);
 
-        handleDeleteTask(taskId, li);
+        handleDeleteTask(taskId);
         return;
     }
 
@@ -86,16 +129,16 @@ function handleToggleComplete(event) {
     }
 
     task.completed = !task.completed;
-    saveTasks();
 
-    li.classList.toggle("completed");
+    saveTasks();
+    renderTasks();
 }
 
 function saveTasks() {
     localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
-function handleDeleteTask(taskId, li) {
+function handleDeleteTask(taskId) {
     const taskIndex = tasks.findIndex(task => task.id === taskId);
 
     if (taskIndex === -1) {
@@ -103,7 +146,7 @@ function handleDeleteTask(taskId, li) {
     }
 
     tasks.splice(taskIndex, 1);
-    saveTasks();
 
-    li.remove();
+    saveTasks();
+    renderTasks();
 }
