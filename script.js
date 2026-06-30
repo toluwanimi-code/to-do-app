@@ -11,13 +11,12 @@ const taskInput = document.getElementById("task-input");
 const addBtn = document.getElementById("add-btn");
 const taskList = document.getElementById("task-list");
 const emptyState = document.getElementById("empty-state");
+const totalTasks = document.getElementById("total-tasks");
+const taskSummary = document.getElementById("task-summary");
 
 const allFilterBtn = document.getElementById("all-filter");
 const activeFilterBtn = document.getElementById("active-filter");
 const completedFilterBtn = document.getElementById("completed-filter");
-
-addBtn.addEventListener("click", handleAddTask);
-taskList.addEventListener("click", handleToggleComplete);
 
 addBtn.addEventListener("click", handleAddTask);
 taskList.addEventListener("click", handleToggleComplete);
@@ -27,11 +26,13 @@ allFilterBtn.addEventListener("click", () => handleFilterChange("all"));
 activeFilterBtn.addEventListener("click", () => handleFilterChange("active"));
 completedFilterBtn.addEventListener("click", () => handleFilterChange("completed"));
 
-
+// Initial app setup
 handleFilterChange("all");
 
 function renderTasks() {
     taskList.innerHTML = "";
+
+    updateCounter();
 
     let filteredTasks = tasks;
 
@@ -44,11 +45,12 @@ function renderTasks() {
     filteredTasks.forEach(task => {
         renderTask(task);
     });
+
     if (filteredTasks.length === 0) {
-    emptyState.style.display = "block";
-} else {
-    emptyState.style.display = "none";
-}
+        emptyState.style.display = "block";
+    } else {
+        emptyState.style.display = "none";
+    }
 }
 
 function renderTask(task) {
@@ -70,6 +72,15 @@ function renderTask(task) {
     li.appendChild(deleteBtn);
 
     taskList.appendChild(li);
+}
+
+function updateCounter() {
+    const total = tasks.length;
+    const active = tasks.filter(task => !task.completed).length;
+    const completed = tasks.filter(task => task.completed).length;
+
+    totalTasks.textContent = `${total} Task${total === 1 ? "" : "s"}`;
+    taskSummary.textContent = `${active} Active • ${completed} Completed`;
 }
 
 function handleAddTask() {
@@ -150,10 +161,6 @@ function handleToggleComplete(event) {
     renderTasks();
 }
 
-function saveTasks() {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-}
-
 function handleDeleteTask(taskId) {
     const taskIndex = tasks.findIndex(task => task.id === taskId);
 
@@ -165,4 +172,8 @@ function handleDeleteTask(taskId) {
 
     saveTasks();
     renderTasks();
+}
+
+function saveTasks() {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
 }
