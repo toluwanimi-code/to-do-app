@@ -10,6 +10,7 @@ let currentFilter = "all";
 const taskInput = document.getElementById("task-input");
 const addBtn = document.getElementById("add-btn");
 const taskList = document.getElementById("task-list");
+const emptyState = document.getElementById("empty-state");
 
 const allFilterBtn = document.getElementById("all-filter");
 const activeFilterBtn = document.getElementById("active-filter");
@@ -43,6 +44,11 @@ function renderTasks() {
     filteredTasks.forEach(task => {
         renderTask(task);
     });
+    if (filteredTasks.length === 0) {
+    emptyState.style.display = "block";
+} else {
+    emptyState.style.display = "none";
+}
 }
 
 function renderTask(task) {
