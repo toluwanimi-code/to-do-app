@@ -55,6 +55,7 @@ function renderTasks() {
 
 function renderTask(task) {
     const li = document.createElement("li");
+    li.style.animation = "fadeIn 0.2s ease";
     li.dataset.id = task.id;
 
     if (task.completed) {
@@ -64,12 +65,22 @@ function renderTask(task) {
     const taskText = document.createElement("span");
     taskText.textContent = task.text;
 
+    const editBtn = document.createElement("button");
+    editBtn.textContent = "Edit";
+    editBtn.classList.add("edit-btn");
+
     const deleteBtn = document.createElement("button");
     deleteBtn.textContent = "Delete";
     deleteBtn.classList.add("delete-btn");
 
+    const buttonGroup = document.createElement("div");
+    buttonGroup.classList.add("task-actions");
+
+    buttonGroup.appendChild(editBtn);
+    buttonGroup.appendChild(deleteBtn);
+
     li.appendChild(taskText);
-    li.appendChild(deleteBtn);
+    li.appendChild(buttonGroup);
 
     taskList.appendChild(li);
 }
@@ -133,6 +144,14 @@ function handleFilterChange(filter) {
 function handleToggleComplete(event) {
     const clickedElement = event.target;
 
+    if (clickedElement.classList.contains("edit-btn")) {
+        const li = clickedElement.closest("li");
+        const taskId = Number(li.dataset.id);
+
+        handleEditTask(taskId);
+        return;
+    }
+
     if (clickedElement.classList.contains("delete-btn")) {
         const li = clickedElement.closest("li");
         const taskId = Number(li.dataset.id);
@@ -159,6 +178,71 @@ function handleToggleComplete(event) {
 
     saveTasks();
     renderTasks();
+}
+
+function handleEditTask(taskId) {
+    const task = tasks.find(taskItem => taskItem.id === taskId);
+
+    if (!task) {
+        return;
+    }
+
+    const li = taskList.querySelector(`li[data-id="${taskId}"]`);
+
+    if (!li) {
+        return;
+    }
+
+    const taskText = li.querySelector("span");
+
+    if (!taskText) {
+        return;
+    }
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.value = task.text;
+    input.classList.add("edit-input");
+
+    let isFinished = false;
+
+    const finishEdit = () => {
+        if (isFinished) {
+            return;
+        }
+
+        isFinished = true;
+
+        const trimmedText = input.value.trim();
+
+        if (trimmedText === "") {
+            input.replaceWith(taskText);
+            return;
+        }
+
+        task.text = trimmedText;
+        taskText.textContent = trimmedText;
+        input.replaceWith(taskText);
+        saveTasks();
+        renderTasks();
+    };
+
+    input.addEventListener("keydown", event => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            finishEdit();
+        } else if (event.key === "Escape") {
+            event.preventDefault();
+            isFinished = true;
+            input.replaceWith(taskText);
+        }
+    });
+
+    input.addEventListener("blur", finishEdit);
+
+    taskText.replaceWith(input);
+    input.focus();
+    input.select();
 }
 
 function handleDeleteTask(taskId) {
