@@ -18,6 +18,10 @@ const completedFilterBtn = document.getElementById("completed-filter");
 addBtn.addEventListener("click", handleAddTask);
 taskList.addEventListener("click", handleToggleComplete);
 
+addBtn.addEventListener("click", handleAddTask);
+taskList.addEventListener("click", handleToggleComplete);
+taskInput.addEventListener("keydown", handleEnterKey);
+
 allFilterBtn.addEventListener("click", () => handleFilterChange("all"));
 activeFilterBtn.addEventListener("click", () => handleFilterChange("active"));
 completedFilterBtn.addEventListener("click", () => handleFilterChange("completed"));
@@ -83,6 +87,12 @@ function handleAddTask() {
 
     taskInput.value = "";
     taskInput.focus();
+}
+
+function handleEnterKey(event) {
+    if (event.key === "Enter") {
+        handleAddTask();
+    }
 }
 
 function handleFilterChange(filter) {
