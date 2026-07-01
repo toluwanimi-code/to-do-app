@@ -66,12 +66,30 @@ function renderTask(task) {
     taskText.textContent = task.text;
 
     const dueDate = document.createElement("small");
-   if (task.dueDate) {
-    dueDate.textContent = `📅 ${formatDueDate(task.dueDate)}`;
-} else {
-    dueDate.textContent = formatDueDate(task.dueDate);
-    dueDate.classList.add("no-due-date");
-}
+    const formattedDate = formatDueDate(task.dueDate);
+
+    dueDate.textContent =
+        formattedDate === "No due date"
+            ? formattedDate
+            : `📅 ${formattedDate}`;
+
+    switch (formattedDate) {
+        case "Overdue":
+            dueDate.classList.add("overdue");
+            break;
+
+        case "Today":
+            dueDate.classList.add("today");
+            break;
+
+        case "Tomorrow":
+            dueDate.classList.add("tomorrow");
+            break;
+
+        case "No due date":
+            dueDate.classList.add("no-due-date");
+            break;
+    }
 
     const taskInfo = document.createElement("div");
     taskInfo.classList.add("task-info");
@@ -121,12 +139,18 @@ function formatDueDate(dateString) {
     if (dueDate.getTime() === today.getTime()) {
         return "Today";
     }
-const tomorrow = new Date(today);
-tomorrow.setDate(today.getDate() + 1);
 
-if (dueDate.getTime() === tomorrow.getTime()) {
-    return "Tomorrow";
-}
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    if (dueDate.getTime() === tomorrow.getTime()) {
+        return "Tomorrow";
+    }
+
+    if (dueDate < today) {
+        return "Overdue";
+    }
+
     return dueDate.toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",

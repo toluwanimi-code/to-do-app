@@ -223,7 +223,22 @@ h1 {
     color: #6b7280;
 }
 
-.no-due-date {
-    font-style: italic;
+.task-info small.no-due-date {
     color: #9ca3af;
+    font-style: italic;
+}
+
+.task-info small.overdue {
+    color: #dc2626;
+    font-weight: 600;
+}
+
+.task-info small.today {
+    color: #16a34a;
+    font-weight: 600;
+}
+
+.task-info small.tomorrow {
+    color: #2563eb;
+    font-weight: 600;
 }
