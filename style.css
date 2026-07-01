@@ -84,9 +84,23 @@ h1 {
     color: #374151;
 }
 
-.completed span {
-    text-decoration: line-through;
-    color: #888;
+.edit-input {
+    flex: 1;
+    padding: 8px 10px;
+    font-size: 16px;
+    font-family: inherit;
+    color: #374151;
+
+    border: 1px solid #c7d2fe;
+    border-radius: 8px;
+    outline: none;
+
+    background-color: white;
+}
+
+.edit-input:focus {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
 }
 
 #task-list li.completed {

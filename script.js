@@ -206,6 +206,10 @@ function handleEditTask(taskId) {
 
     let isFinished = false;
 
+    const replaceInputWithTaskText = () => {
+        input.replaceWith(taskText);
+    };
+
     const finishEdit = () => {
         if (isFinished) {
             return;
@@ -216,13 +220,11 @@ function handleEditTask(taskId) {
         const trimmedText = input.value.trim();
 
         if (trimmedText === "") {
-            input.replaceWith(taskText);
+            replaceInputWithTaskText();
             return;
         }
 
         task.text = trimmedText;
-        taskText.textContent = trimmedText;
-        input.replaceWith(taskText);
         saveTasks();
         renderTasks();
     };
@@ -234,7 +236,7 @@ function handleEditTask(taskId) {
         } else if (event.key === "Escape") {
             event.preventDefault();
             isFinished = true;
-            input.replaceWith(taskText);
+            replaceInputWithTaskText();
         }
     });
 
