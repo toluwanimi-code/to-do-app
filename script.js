@@ -66,12 +66,12 @@ function renderTask(task) {
     taskText.textContent = task.text;
 
     const dueDate = document.createElement("small");
-    if (task.dueDate) {
-        dueDate.textContent = `📅 ${task.dueDate}`;
-    } else {
-        dueDate.textContent = "No due date";
-        dueDate.classList.add("no-due-date");
-    }
+   if (task.dueDate) {
+    dueDate.textContent = `📅 ${formatDueDate(task.dueDate)}`;
+} else {
+    dueDate.textContent = formatDueDate(task.dueDate);
+    dueDate.classList.add("no-due-date");
+}
 
     const taskInfo = document.createElement("div");
     taskInfo.classList.add("task-info");
@@ -105,6 +105,33 @@ function updateCounter() {
 
     totalTasks.textContent = `${total} Task${total === 1 ? "" : "s"}`;
     taskSummary.textContent = `${active} Active • ${completed} Completed`;
+}
+
+function formatDueDate(dateString) {
+    if (!dateString) {
+        return "No due date";
+    }
+
+    const dueDate = new Date(dateString);
+    const today = new Date();
+
+    dueDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
+    if (dueDate.getTime() === today.getTime()) {
+        return "Today";
+    }
+const tomorrow = new Date(today);
+tomorrow.setDate(today.getDate() + 1);
+
+if (dueDate.getTime() === tomorrow.getTime()) {
+    return "Tomorrow";
+}
+    return dueDate.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric"
+    });
 }
 
 function handleAddTask() {
