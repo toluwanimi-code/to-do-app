@@ -8,6 +8,7 @@ let nextId =
 let currentFilter = "all";
 
 const taskInput = document.getElementById("task-input");
+const dueDateInput = document.getElementById("due-date-input");
 const addBtn = document.getElementById("add-btn");
 const taskList = document.getElementById("task-list");
 const emptyState = document.getElementById("empty-state");
@@ -26,7 +27,6 @@ allFilterBtn.addEventListener("click", () => handleFilterChange("all"));
 activeFilterBtn.addEventListener("click", () => handleFilterChange("active"));
 completedFilterBtn.addEventListener("click", () => handleFilterChange("completed"));
 
-// Initial app setup
 handleFilterChange("all");
 
 function renderTasks() {
@@ -65,6 +65,19 @@ function renderTask(task) {
     const taskText = document.createElement("span");
     taskText.textContent = task.text;
 
+    const dueDate = document.createElement("small");
+    if (task.dueDate) {
+        dueDate.textContent = `📅 ${task.dueDate}`;
+    } else {
+        dueDate.textContent = "No due date";
+        dueDate.classList.add("no-due-date");
+    }
+
+    const taskInfo = document.createElement("div");
+    taskInfo.classList.add("task-info");
+    taskInfo.appendChild(taskText);
+    taskInfo.appendChild(dueDate);
+
     const editBtn = document.createElement("button");
     editBtn.textContent = "Edit";
     editBtn.classList.add("edit-btn");
@@ -79,7 +92,7 @@ function renderTask(task) {
     buttonGroup.appendChild(editBtn);
     buttonGroup.appendChild(deleteBtn);
 
-    li.appendChild(taskText);
+    li.appendChild(taskInfo);
     li.appendChild(buttonGroup);
 
     taskList.appendChild(li);
@@ -104,7 +117,9 @@ function handleAddTask() {
     const newTask = {
         id: nextId,
         text: trimmedTaskText,
-        completed: false
+        completed: false,
+        dueDate: dueDateInput.value
+
     };
 
     tasks.push(newTask);
@@ -114,6 +129,7 @@ function handleAddTask() {
     renderTasks();
 
     taskInput.value = "";
+    dueDateInput.value = "";
     taskInput.focus();
 }
 

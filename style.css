@@ -211,3 +211,19 @@ h1 {
         transform: translateY(0);
     }
 }
+
+.task-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.task-info small {
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+
+.no-due-date {
+    font-style: italic;
+    color: #9ca3af;
+}
